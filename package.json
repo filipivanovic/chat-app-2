@@ -3,12 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "echo \"Error: no test specified\" && exit 1"
+    "server": "node backend/server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "bcryptjs": "^3.0.2",
     "cookie-parser": "^1.4.7",
@@ -18,5 +17,17 @@
     "mongoose": "^8.13.3",
     "nodemon": "^3.1.10",
     "socket.io": "^4.8.1"
-  }
+  },
+  "devDependencies": {
+    "prettier": "^3.5.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/filipivanovic/chat-app-2.git"
+  },
+  "bugs": {
+    "url": "https://github.com/filipivanovic/chat-app-2/issues"
+  },
+  "homepage": "https://github.com/filipivanovic/chat-app-2#readme",
+  "description": ""
 }
