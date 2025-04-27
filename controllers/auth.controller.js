@@ -1,4 +1,4 @@
-import bcryptjs from 'bcryptjs'
+import bcrypt from 'bcryptjs'
 import User from '../backend/models/user.model.js'
 import generateTokendAndSetCookie from '../backend/utils/generateToken.js'
 
@@ -16,8 +16,8 @@ export const signup = async (req, res) => {
       return res.status(400).json({ message: 'Username already exists' })
     }
     //   hash password here
-    const salt = await bcryptjs.genSalt(10)
-    const hashedPassword = await bcryptjs.hash(password, salt)
+    const salt = await bcrypt.genSalt(10)
+    const hashedPassword = await bcrypt.hash(password, salt)
 
     const boyProfilePic = `https://avatar.iran.liara.run/public/boy?username=${username}`
     const girlProfilePic = `https://avatar.iran.liara.run/public/girl?username=${username}`
@@ -45,7 +45,7 @@ export const signup = async (req, res) => {
       res.status(400).json({ message: 'Invalid user data' })
     }
   } catch (error) {
-    console.error(`Error in signup method: ${error}`)
+    console.error(`Error in signup controller: ${error}`)
     res.status(500).json({ message: 'Internal Server Error' })
   }
 }
@@ -53,14 +53,34 @@ export const signup = async (req, res) => {
 export const login = async (req, res) => {
   try {
     const { username, password } = req.body
+    const user = await User.findOne({ username })
+    const isPasswordCorrect = await bcrypt.compare(password, user?.password || '')
+
+    if (!user || !isPasswordCorrect) {
+      return res.status(400).json({ message: 'Invalid credentials' })
+    }
+    generateTokendAndSetCookie(user._id, res)
+
+    res.status(200).json({
+      _id: user._id,
+      fullName: user.fullName,
+      username: user.username,
+      profilePic: user.profilePic
+    })
   } catch (error) {
-    console.error(`Error in login method: ${error.message}`)
+    console.error(`Error in login controller: ${error.message}`)
+    res.status(500).json({ message: 'Internal Server Error' })
   }
 }
 
-export const logout = async (req, res) => {
+export const logout = (req, res) => {
   try {
+    res.cookie('jwt', '', {
+      maxAge: 0
+    })
+    res.status(200).json({ message: 'Logged out successfully' })
   } catch (error) {
-    console.error(`Error in logout method: ${error.message}`)
+    console.error(`Error in logout controller: ${error.message}`)
+    res.status(500).json({ message: 'Internal Server Error' })
   }
 }
